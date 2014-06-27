@@ -30,7 +30,7 @@ class HtmlToPdfTest extends PHPUnit {
     public function testCreatePdf() {
         $this->assertEquals('test.pdf', $this->HtmlToPdf->create('Teste', '/tmp/test.pdf'));
     }
-    
+
     /**
      * Teste get/set of HtmlToPdf::getBin() and HtmlToPdf::setBin()
      */
@@ -40,7 +40,7 @@ class HtmlToPdfTest extends PHPUnit {
         $this->assertEmpty($this->HtmlToPdf->setExec('/usr/local/bin/wkhtmltoimage'));
         $this->assertEquals('/usr/local/bin/wkhtmltoimage', $this->HtmlToPdf->getExec());
     }
-    
+
     /**
      * Teste get/set of HtmlToPdf::getTmp() and HtmlToPdf::setTmp()
      */
@@ -49,6 +49,27 @@ class HtmlToPdfTest extends PHPUnit {
         $this->assertEquals('/tmp', $this->HtmlToPdf->getTmp());
         $this->assertEmpty($this->HtmlToPdf->setTmp('/home/natan/Projects/tmp'));
         $this->assertEquals('/home/natan/Projects/tmp', $this->HtmlToPdf->getTmp());
+    }
+    
+    /**
+     * Teste get/set of HtmlToPdf::getOptions() and HtmlToPdf::setOptions()
+     */
+    public function testGetSetOptions() {
+        //Options
+        $options = array(
+            'grayscale' => null,
+            'lowquality' => null,
+            'orientation' => null,
+            'page-size' => null,
+            'title' => null,
+            'print-media-type ' => null,
+            'no-print-media-type' => null
+        );
+
+        $this->assertEquals('', $this->HtmlToPdf->getOptions());
+        $this->assertEquals($options, $this->HtmlToPdf->getOptions(false));
+        $this->assertEmpty($this->HtmlToPdf->setOptions(array('grayscale' => 0, 'title' => 'Test')));
+        $this->assertEquals(' --grayscale 0 --title Test', $this->HtmlToPdf->getOptions());
     }
 
     /**

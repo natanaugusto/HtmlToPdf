@@ -33,6 +33,34 @@ class HtmlToPdf {
     protected $tmp = '/tmp';
 
     /**
+     * Aditional options provides by WkHtmlToPdf
+     * 
+     * Options:
+     * --grayscale                     PDF will be generated in grayscale
+     * --lowquality                    Generates lower quality pdf/ps. Useful to shrink the result document space
+     * --orientation <orientation>     Set orientation to Landscape or Portrait (default Portrait)
+     * --page-size <Size>              Set paper size to: A4, Letter, etc. (default A4)
+     * --read-args-from-stdin          Read command line arguments from stdin
+     * --title <text>                  The title of the generated pdf file (The title of the first document is used if not specified)
+     * 
+     * Page Options:
+     * --print-media-type              Use print media-type instead of screen
+     * --no-print-media-type           Do not use print media-type instead of screen (default) 
+     * @link http://wkhtmltopdf.org/docs.html Documentation from WkHtmlToPdf
+     * 
+     * @var array
+     */
+    protected $options = array(
+        'grayscale' => null,
+        'lowquality' => null,
+        'orientation' => null,
+        'page-size' => null,
+        'title' => null,
+        'print-media-type ' => null,
+        'no-print-media-type' => null
+    );
+
+    /**
      * Create an PDF document based on HTML
      * @param string $html String HTML
      * @param string $target Path where de PDF document will be created
@@ -48,7 +76,7 @@ class HtmlToPdf {
 
         $html = $this->createHtmlFile($html);
 
-        $cmd = "{$this->getExec()} $html $target";
+        $cmd = "{$this->getExec()}{$this->getOptions()} $html $target";
 
         exec($cmd);
 
@@ -93,6 +121,72 @@ class HtmlToPdf {
         self::isWritable($tmp);
 
         $this->tmp = $tmp;
+    }
+
+    /**
+     * Returne options aditionals for wkhtmltopdf
+     * 
+     * Options:
+     * --grayscale                     PDF will be generated in grayscale
+     * --lowquality                    Generates lower quality pdf/ps. Useful to shrink the result document space
+     * --orientation <orientation>     Set orientation to Landscape or Portrait (default Portrait)
+     * --page-size <Size>              Set paper size to: A4, Letter, etc. (default A4)
+     * --read-args-from-stdin          Read command line arguments from stdin
+     * --title <text>                  The title of the generated pdf file (The title of the first document is used if not specified)
+     * 
+     * Page Options:
+     * --print-media-type              Use print media-type instead of screen
+     * --no-print-media-type           Do not use print media-type instead of screen (default) 
+     * @link http://wkhtmltopdf.org/docs.html Documentation from WkHtmlToPdf
+     * 
+     * @param boolean $string Set true for string return. And false for array return
+     * @return array|string Return a array if $string is equals false
+     */
+    public function getOptions($string = true) {
+        if ($string === true) {
+            $string = '';
+
+            foreach ($this->options as $option => $value) {
+                if (!is_null($value)) {
+                    $string .= " --{$option} {$value}";
+                }
+            }
+
+            return $string;
+        }
+
+        return $this->options;
+    }
+
+    /**
+     * Set options aditionals for wkhtmltopdf
+     * 
+     * Options:
+     * --grayscale                     PDF will be generated in grayscale
+     * --lowquality                    Generates lower quality pdf/ps. Useful to shrink the result document space
+     * --orientation <orientation>     Set orientation to Landscape or Portrait (default Portrait)
+     * --page-size <Size>              Set paper size to: A4, Letter, etc. (default A4)
+     * --read-args-from-stdin          Read command line arguments from stdin
+     * --title <text>                  The title of the generated pdf file (The title of the first document is used if not specified)
+     * 
+     * Page Options:
+     * --print-media-type              Use print media-type instead of screen
+     * --no-print-media-type           Do not use print media-type instead of screen (default) 
+     * @link http://wkhtmltopdf.org/docs.html Documentation from WkHtmlToPdf
+     * 
+     * @param array $options Array of options from WkHtmlToPdf
+     * @throws Exception
+     */
+    public function setOptions($options) {
+        if (!is_array($options)) {
+            throw new Exception('Parameter $options must be a array');
+        }
+
+        foreach ($options as $option => $value) {
+            if (key_exists($option, $this->options)) {
+                $this->options[$option] = $value;
+            }
+        }
     }
 
     /**
